@@ -11,7 +11,7 @@ import uz.turgunboyevjurabek.catss.repo.MyRepozitory
 import uz.turgunboyevjurabek.catss.utils.Resource
 
 class ImagesViewModel():ViewModel() {
-    val myRepozitory= MyRepozitory(ApiClient.apiService)
+    private val myRepozitory= MyRepozitory(ApiClient.apiService)
     private val myLiveData=MutableLiveData<Resource<GetImageResponse>>()
 
     fun getCats(limit:Int): MutableLiveData<Resource<GetImageResponse>> {
