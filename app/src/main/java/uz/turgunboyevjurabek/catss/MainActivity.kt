@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoilApi::class)
+@file:OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 
 package uz.turgunboyevjurabek.catss
 
@@ -7,8 +7,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +24,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+
+
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     val context= LocalContext.current
                     LaunchedEffect(key1 = true){
                         imagesViewModel=ViewModelProvider(this@MainActivity)[ImagesViewModel::class.java]
-                        imagesViewModel.getCats(20).observe(this@MainActivity, Observer {
+                        imagesViewModel.getCats(50).observe(this@MainActivity, Observer {
                             when(it.status){
                                 Status.LOADING -> {
                                     Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
@@ -87,7 +99,10 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun List(list:GetImageResponse) {
-        LazyColumn{
+        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(200.dp),
+            verticalItemSpacing = 4.dp,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ){
             items(list.size){
                 UI(getImageResponseItem = list[it])
             }
@@ -101,18 +116,21 @@ class MainActivity : ComponentActivity() {
         ElevatedCard(
             elevation = CardDefaults.elevatedCardElevation(10.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp)
-                .height(height.dp)
+                .padding(5.dp)
+                .height(maxOf(300.dp))
                 .width(with.dp)
+
         ) {
-            Image(painter = rememberImagePainter(data = getImageResponseItem.url,
-                builder = {
-                    crossfade(true)
-                }),
-                contentDescription =null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds)
+
+                Image(painter = rememberImagePainter(data = getImageResponseItem.url,
+                    builder = {
+                        crossfade(3000)
+                    }),
+                    contentDescription =null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
+                )
+
         }
 
     }
